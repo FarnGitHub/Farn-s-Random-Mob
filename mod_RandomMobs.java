@@ -3,20 +3,30 @@ package net.minecraft.src;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import overrideapi.OverrideAPI;
+
+import net.minecraft.client.Minecraft;
 
 public class mod_RandomMobs extends BaseMod {
 	private static Map textureVariantsMap = new HashMap();
 	private static Random random;
-	private static RenderEngine renderEngine = ModLoader.getMinecraftInstance().renderEngine;
 
-	{
+	public mod_RandomMobs() {
 		ModLoader.SetInGameHook(this, true, false);
-		ModLoader.getMinecraftInstance().renderEngine = (new RenderEngineRandomMobs());
+        	try {
+			Class<?> bakedRenderEngineProxy = OverrideAPI.INSTANCE.proxyLoader.findClass("RenderEngineRandomMobs");
+			RenderEngine renderEngineProxy = (RenderEngine)bakedRenderEngineProxy.getConstructor().newInstance();
+			ModLoader.getMinecraftInstance().renderEngine = renderEngineProxy;
+		} catch (Exception e) {
+		}
+
+		fixMcPatcher();
 	}
 
 	public boolean OnTickInGame(net.minecraft.client.Minecraft mc) {
@@ -26,8 +36,10 @@ public class mod_RandomMobs extends BaseMod {
 		for(int e = 0; e < entityList.size(); ++e) {
 			Entity entity = (Entity)entityList.get(e);
 			if(entity.skinUrl == null) {
-				if(entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
-					entity.skinUrl = "" + random.nextInt(entity.entityId);
+				if(entity instanceof EntityLiving) {
+					if(!(entity instanceof EntityPlayer)) {
+						entity.skinUrl = "" + random.nextInt(entity.entityId + 1);
+					}
 				}
 			}
 		}
@@ -54,7 +66,7 @@ public class mod_RandomMobs extends BaseMod {
 				if(texs != null && texs.length > 0) {
 					int index = num % texs.length;
 					String tex = texs[index];
-					return tex == texs[0] ? -1 : renderEngine.getTexture(tex);
+					return tex == texs[0] ? -1 : getTexture(tex);
 				}
 			}
 		}
@@ -109,21 +121,23 @@ public class mod_RandomMobs extends BaseMod {
 	}
 
 	public String Version() {
-		return "1.3";
+		return "1.4";
 	}
 
-	public static InputStream getInputStream(String texture) {
-		return ModLoader.getMinecraftInstance().texturePackList.selectedTexturePack.getResourceAsStream(texture);
+	public static InputStream getInputStream(String resource) {
+		return ModLoader.getMinecraftInstance().texturePackList.selectedTexturePack.getResourceAsStream(resource);
 	}
 
-	private static boolean isBlackListTexture(String string) {
-		return string == "/custom_water_still.png" || 
-		string == "/custom_water_still.png" || 
-		string == "/custom_water_flowing.png" || 
-		string == "/custom_lava_still.png" || 
-		string == "/custom_lava_flowing.png" || 
-		string == "/custom_portal.png" || 
-		string == "/custom_fire_n_s.png" || 
-		string == "/custom_fire_e_w.png";
+	public static int getTexture(String tex) {
+		return ModLoader.getMinecraftInstance().renderEngine.getTexture(tex);
+	}
+
+	public static void fixMcPatcher() {
+		try {
+			Class patcher = Class.forName("com.pclewis.mcpatcher.mod.TextureUtils");
+			Method method = patcher.getDeclaredMethod("refreshTextureFX", new Class[]{List.class});
+			method.invoke((Object)null, new Object[]{(List)ModLoader.getPrivateValue(RenderEngine.class, ModLoader.getMinecraftInstance().renderEngine, 6)});
+		} catch(Exception e) {
+		}
 	}
 }
