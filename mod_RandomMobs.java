@@ -9,8 +9,6 @@ import java.util.Random;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import overrideapi.OverrideAPI;
-
 import net.minecraft.client.Minecraft;
 
 public class mod_RandomMobs extends BaseMod {
@@ -19,13 +17,7 @@ public class mod_RandomMobs extends BaseMod {
 
 	public mod_RandomMobs() {
 		ModLoader.SetInGameHook(this, true, false);
-        	try {
-			Class<?> bakedRenderEngineProxy = OverrideAPI.INSTANCE.proxyLoader.findClass("RenderEngineRandomMobs");
-			RenderEngine renderEngineProxy = (RenderEngine)bakedRenderEngineProxy.getConstructor().newInstance();
-			ModLoader.getMinecraftInstance().renderEngine = renderEngineProxy;
-		} catch (Exception e) {
-		}
-
+		ModLoader.getMinecraftInstance().renderEngine = new RenderEngineRandomMobs();
 		fixMcPatcher();
 	}
 

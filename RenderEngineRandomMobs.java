@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import java.lang.IllegalArgumentException;
+
 public class RenderEngineRandomMobs extends RenderEngine {
 
 	public RenderEngineRandomMobs() {
@@ -17,6 +19,9 @@ public class RenderEngineRandomMobs extends RenderEngine {
 
 	public void refreshTextures() {
 		mod_RandomMobs.clearTextureCache();
-		super.refreshTextures();
+		try {
+			super.refreshTextures();
+		} catch (IllegalArgumentException theSuperAnnoyingCrash) {
+		}
 	}
 }
