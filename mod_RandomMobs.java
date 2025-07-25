@@ -113,7 +113,7 @@ public class mod_RandomMobs extends BaseMod {
 	}
 
 	public String Version() {
-		return "1.4";
+		return "1.3.3";
 	}
 
 	public static InputStream getInputStream(String resource) {
@@ -130,6 +130,15 @@ public class mod_RandomMobs extends BaseMod {
 			Method method = patcher.getDeclaredMethod("refreshTextureFX", new Class[]{List.class});
 			method.invoke((Object)null, new Object[]{(List)ModLoader.getPrivateValue(RenderEngine.class, ModLoader.getMinecraftInstance().renderEngine, 6)});
 		} catch(Exception e) {
+		}
+	}
+
+	public static boolean doesClassExist(String className) {
+		try {
+			Class.forName(className);
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
 		}
 	}
 }
