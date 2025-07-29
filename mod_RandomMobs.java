@@ -113,7 +113,7 @@ public class mod_RandomMobs extends BaseMod {
 	}
 
 	public String Version() {
-		return "1.3.3";
+		return "1.3.4";
 	}
 
 	public static InputStream getInputStream(String resource) {

@@ -105,6 +105,37 @@ public class RenderEngineRandomMobs extends RenderEngine {
 				e.printStackTrace();
 			}
 		}
+
+		if(isUsingShader()) {
+			this.removeShader();
+		}
+	}
+
+	private boolean isUsingShader() {
+		if(mod_RandomMobs.doesClassExist("mod_GLSL")) {
+			try {
+				Class shaderToggle = Class.forName("net.mine_diver.glsl.ToggleShaders");
+				String currentShader = (String)ModLoader.getPrivateValue(shaderToggle, (Object)null, "currentShaders");
+				return !currentShader.equals("default");
+			} catch(Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+
+		}
+		return false;
+	}
+
+	private void removeShader() {
+		try {
+			Class shader = Class.forName("net.mine_diver.glsl.Shaders");
+			Method method = shader.getDeclaredMethod("destroy");
+			method.invoke((Object)null);
+			ModLoader.setPrivateValue(shader, (Object)null, "isInitialized", false);
+			System.out.println("Farn RandomMob Remove Shader");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private Object getPrivateValue(String fieldName) {
