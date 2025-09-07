@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "test.haha"
-version = "1.0"
+version = "1.5"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -39,11 +39,6 @@ unimined.minecraft(client) {
 
     mappings {
         retroMCP("b1.7")
-        stub.withMappings("searge","mcp") {
-            c("ModLoader", "net/minecraft/src/ModLoader", "net/minecraft/src/ModLoader")
-            c("BaseMod", "net/minecraft/src/BaseMod", "net/minecraft/src/BaseMod")
-            c("mod_RandomMobUnimined", "net/minecraft/src/mod_RandomMobUnimined", "net/minecraft/src/mod_RandomMobUnimined")
-        }
     }
 
     jarMod {
