@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "random_mob",
+	"version": "${version}",
+	"name": "Farn's Random mob",
+	"description": "Allowed texturepack to have randomized mob texture",
+	"authors": [
+		"Farn"
+	],
+	"license": "CC0-1.0",
+	"icon": "assets/farnRandomMob/icon.png",
+	"environment": "client",
+  "entrypoints": {
+    "client": [
+      "farn.farnRandomMob.RandomMob"
+    ]
+  },
+  "mixins": [
+    "random_mobs.mixins.json"
+  ],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": "1.0.0-beta.7.3",
+		"osl-entrypoints": ">=0.4.0",
+    "mcpatcherfabric": ">=1.0.0"
+	}
+}

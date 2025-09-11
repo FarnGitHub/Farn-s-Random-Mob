@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "farn.farnRandomMob.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"client": [
+    "TextureManagerMixin",
+    "WorldMixin",
+    "EntityMixin",
+    "MinecraftAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
