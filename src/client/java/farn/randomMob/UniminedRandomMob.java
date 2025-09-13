@@ -21,7 +21,7 @@ public class UniminedRandomMob {
     public static void entityLoaded(Entity entity) {
         if (entity.skinUrl == null && entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
             if (entity.worldObj.multiplayerWorld) {
-                entity.skinUrl = entity.entityId + getBiomeForEntity(entity).toLowerCase();
+                entity.skinUrl = entity.entityId + "_" + getBiomeForEntity(entity).toLowerCase();
             } else {
                 IEntitySkinID id = (IEntitySkinID) entity;
                 if("unknown".equals(id.getBiomeSpawn())) {
