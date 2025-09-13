@@ -8,97 +8,117 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UniminedRandomMob {
 
-    private static Map textureVariantsMap = new HashMap();
+    // Cache for .properties -> texture rules
+    private static final Map<String, Properties> propertiesCache = new HashMap<>();
+    // Cache for old-style numeric variants (texture.png, texture2.png…)
+    private static final Map<String, String[]> textureVariantsCache = new HashMap<>();
     private static Minecraft mc;
 
     public static void entityLoaded(Entity entity) {
-        if(entity.skinUrl == null) {
-            if(entity instanceof EntityLiving) {
-                if(!(entity instanceof EntityPlayer)) {
-                    int randomId = entity.entityId;
-                    entity.skinUrl = "" + randomId;
+        if (entity.skinUrl == null && entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
+            if (entity.worldObj.multiplayerWorld) {
+                entity.skinUrl = entity.entityId + getBiomeForEntity(entity).toLowerCase();
+            } else {
+                IEntitySkinID id = (IEntitySkinID) entity;
+                if("unknown".equals(id.getBiomeSpawn())) {
+                    id.setBiomeSpawn(getBiomeForEntity(entity));
                 }
+                entity.skinUrl = id.getEntitySkinID() + "_" + id.getBiomeSpawn().toLowerCase();
             }
         }
     }
-
 
     public static void clearTextureCache() {
-        textureVariantsMap.clear();
+        propertiesCache.clear();
+        textureVariantsCache.clear();
     }
 
-    public static int getTexture(String skinUrl, String texture) {
-        if(texture != null && skinUrl != null && skinUrl.length() > 1) {
-            char ch = skinUrl.charAt(0);
-            if(ch >= 48 && ch <= 57) {
-                int num = Math.abs(skinUrl.hashCode());
-                String[] texs = (String[])(textureVariantsMap.get(texture));
-                if(texs == null) {
-                    texs = getTextureVariants(texture);
-                    textureVariantsMap.put(texture, texs);
-                }
+    public static int getTextureRandomMob(String skinUrl, String baseTexture) {
+        if (skinUrl == null || baseTexture == null) return -1;
+        // e.g. "42_desert"
+        String[] parts = skinUrl.split("_", 2);
+        String idPart = parts[0];
+        String biome = parts.length > 1 ? parts[1] : "unknown";
 
-                if(texs != null && texs.length > 0) {
-                    int index = num % texs.length;
-                    String tex = texs[index];
-                    return tex == texs[0] ? -1 : getTextureNormal(tex);
+        int entityId;
+        try {
+            entityId = Math.abs(Integer.parseInt(idPart));
+        } catch (NumberFormatException e) {
+            entityId = Math.abs(skinUrl.hashCode()); // fallback
+        }
+
+        // --- 1️⃣ try properties file for biome ---
+        Properties props = getPropertiesForTexture(baseTexture);
+        if (props != null) {
+            // Normalize biome name to match properties keys
+            String key = "biome." + biome.toLowerCase().replace(' ', '_');
+
+            // Get the actual texture path(s) from the properties
+            String rule = props.getProperty(key);
+            if (rule == null) rule = props.getProperty("biome.default");
+
+            if (rule != null) {
+                String[] variants = Arrays.stream(rule.split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .toArray(String[]::new);
+                if (variants.length > 0) {
+                    String chosen = variants[entityId % variants.length];
+                    return getTextureNormal(chosen);
                 }
             }
         }
 
+        // --- 2️⃣ fallback to old random naming ---
+        String[] variants = textureVariantsCache.computeIfAbsent(baseTexture, UniminedRandomMob::getTextureVariants);
+        if (variants.length > 1) {
+            int idx = entityId % variants.length;
+            if (!variants[idx].equals(variants[0])) {
+                return getTextureNormal(variants[idx]);
+            }
+        }
         return -1;
     }
 
-    private static String[] getTextureVariants(String texture) {
-        String[] texs = new String[]{texture};
-        int pointPos = texture.lastIndexOf(46);
-        if(pointPos < 0) {
-            return texs;
-        } else {
-            String prefix = texture.substring(0, pointPos);
-            String suffix = texture.substring(pointPos);
-            int countVariants = getCountTextureVariants(texture, prefix, suffix);
-            if(countVariants <= 1) {
-                return texs;
-            } else {
-                texs = new String[countVariants];
-                texs[0] = texture;
-
-                for(int i = 1; i < texs.length; ++i) {
-                    int texNum = i + 1;
-                    texs[i] = prefix + texNum + suffix;
-                }
-
-                return texs;
-            }
-        }
+    private static Properties getPropertiesForTexture(String texture) {
+        return propertiesCache.computeIfAbsent(texture, UniminedRandomMob::loadProperties);
     }
 
-    private static int getCountTextureVariants(String texture, String prefix, String suffix) {
-        short maxNum = 1000;
+    private static Properties loadProperties(String baseTexture) {
+        String path = baseTexture.replace(".png", ".properties");
+        try (InputStream in = getInputStream(path)) {
+            if (in != null) {
+                Properties p = new Properties();
+                p.load(in);
+                return p;
+            }
+        } catch (IOException ignored) {}
+        return null;
+    }
 
-        for(int num = 2; num < maxNum; ++num) {
-            String variant = prefix + num + suffix;
+    private static String[] getTextureVariants(String texture) {
+        int dot = texture.lastIndexOf('.');
+        if (dot < 0) return new String[]{texture};
 
-            try {
-                InputStream e = getInputStream(variant);
-                if(e == null) {
-                    return num - 1;
-                }
+        String prefix = texture.substring(0, dot);
+        String suffix = texture.substring(dot);
+        List<String> list = new ArrayList<>();
+        list.add(texture);
 
-                e.close();
-            } catch (IOException iOException8) {
-                return num - 1;
+        for (int i = 2; i < 1000; i++) {
+            String candidate = prefix + i + suffix;
+            try (InputStream in = getInputStream(candidate)) {
+                if (in == null) break;
+                list.add(candidate);
+            } catch (IOException e) {
+                break;
             }
         }
-
-        return maxNum;
+        return list.toArray(new String[0]);
     }
 
     public static InputStream getInputStream(String resource) {
@@ -226,6 +246,14 @@ public class UniminedRandomMob {
         } catch(Exception e) {
         }
     }
+    public static String getBiomeForEntity(Entity e) {
+        if (e == null || e.worldObj == null) return "unknown";
+        int x = MathHelper.floor_double(e.posX);
+        int z = MathHelper.floor_double(e.posZ);
+        BiomeGenBase biome = e.worldObj.getWorldChunkManager().getBiomeGenAt(x, z);
+        return (biome != null && biome.biomeName != null) ? biome.biomeName : "unknown";
+    }
+
 
 
 }

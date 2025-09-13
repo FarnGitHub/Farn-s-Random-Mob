@@ -42,7 +42,7 @@ public abstract class TransformRenderEngine {
 
     @CInject(method="getTextureForDownloadableImage", target=@CTarget("HEAD"), cancellable = true)
     public void getTextureForDownloadableImage(String string, String string2, InjectionCallback callback) {
-        int threaddownloadimagedata = UniminedRandomMob.getTexture(string, string2);
+        int threaddownloadimagedata = UniminedRandomMob.getTextureRandomMob(string, string2);
         if(threaddownloadimagedata >= 0) {
             callback.setReturnValue(threaddownloadimagedata);
         }
