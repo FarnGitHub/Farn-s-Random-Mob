@@ -11,8 +11,6 @@ import net.minecraft.src.*;
 
 import java.io.InputStream;
 import java.util.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.awt.image.BufferedImage;
 
 @CTransformer(RenderEngine.class)

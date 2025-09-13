@@ -39,6 +39,11 @@ unimined.minecraft(client) {
 
     mappings {
         retroMCP("b1.7")
+
+        stub.withMappings("mcp") {
+            c("RandomMobTransformDownloadImage", "net/minecraft/src/RandomMobTransformDownloadImage")
+            // you can add more as you need them...
+        }
     }
 
     jarMod {
