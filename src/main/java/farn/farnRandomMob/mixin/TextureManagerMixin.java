@@ -18,7 +18,7 @@ public abstract class TextureManagerMixin {
 		cancellable = true
 	)
 	private void onBindHttpTexture(String path, String defaultPath, CallbackInfoReturnable<Integer> cir) {
-		int tex = RandomMob.getTexture(path, defaultPath);
+		int tex = RandomMob.getTextureRandomMob(path, defaultPath);
 		if (tex >= 0) {
 			cir.setReturnValue(tex);
 		}

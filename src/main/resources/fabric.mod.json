@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
 	"id": "random_mob",
-	"version": "${version}",
+	"version": "2.0 beta 1",
 	"name": "Farn's Random mob",
-	"description": "Allowed texturepack to have randomized mob texture",
+	"description": "Allowed texturepack to have randomized mob texture and biome dependent texture",
 	"authors": [
 		"Farn"
 	],
@@ -21,7 +21,6 @@
 	"depends": {
 		"fabricloader": ">=0.14.21",
 		"minecraft": "1.0.0-beta.7.3",
-		"osl-entrypoints": ">=0.4.0",
     "mcpatcherfabric": ">=1.0.0"
 	}
 }
