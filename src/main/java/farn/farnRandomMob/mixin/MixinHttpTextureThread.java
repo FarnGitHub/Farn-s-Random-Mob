@@ -25,26 +25,35 @@ public abstract class MixinHttpTextureThread extends Thread {
 	@Overwrite
 	public void run() {
 		HttpURLConnection conn = null;
-		try {
-			if (f_4140703 == null || !f_4140703.startsWith("http")) return;
+		String location = this.f_4140703; // will need @Shadow
 
-			URL u = new URL(f_4140703);
-			conn = (HttpURLConnection) u.openConnection();
+		try {
+			if (location == null || !location.startsWith("http")) {
+				return; // skip bad values
+			}
+
+			URL url = new URL(location);
+			conn = (HttpURLConnection) url.openConnection();
 			conn.setDoInput(true);
 			conn.setDoOutput(false);
 			conn.connect();
 
 			if (conn.getResponseCode() / 100 != 4) {
-				BufferedImage img = ImageIO.read(conn.getInputStream());
-				f_7124740.image =
-					(f_3368629 == null) ? img : f_3368629.process(img);
+				if (f_3368629 == null) {
+					f_7124740.image = ImageIO.read(conn.getInputStream());
+				} else {
+					f_7124740.image =
+						f_3368629.process(ImageIO.read(conn.getInputStream()));
+				}
 			}
 		} catch (MalformedURLException e) {
-			System.err.println("[RandomMob] Bad skin URL: " + f_4140703);
+			// Quietly ignore or log once
+			System.err.println("[RandomMob] Bad URL: " + location);
 		} catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace(); // keep real IO errors
 		} finally {
 			if (conn != null) conn.disconnect();
 		}
+
 	}
 }
