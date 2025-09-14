@@ -13,7 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-@Mixin(targets = "net.minecraft.client.render.texture.HttpTexture$1")
+@Mixin(targets = "net.minecraft.client.render.texture.HttpTexture$1", priority = 900)
 public abstract class MixinHttpTextureThread extends Thread {
 	@Shadow(remap = false) private String f_4140703;
 	@Shadow(remap = false) private HttpImageProcessor f_3368629;
