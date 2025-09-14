@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "random_mob",
-	"version": "2.0 beta 1",
+	"version": "2.0 beta 2",
 	"name": "Farn's Random mob",
 	"description": "Allowed texturepack to have randomized mob texture and biome dependent texture",
 	"authors": [

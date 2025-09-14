@@ -24,7 +24,7 @@ public abstract class TextureManagerMixin {
 		}
 	}
 
-	@Inject(method = "reload", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "reload", at = @At("HEAD"))
 	public void reload(CallbackInfo info) {
 		RandomMob.clearTextureCache();
 	}
