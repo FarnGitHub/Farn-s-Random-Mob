@@ -15,7 +15,7 @@ import java.util.*;
 import java.awt.image.BufferedImage;
 
 @CTransformer(RenderEngine.class)
-public abstract class TransformRenderEngine {
+public class TransformRenderEngine {
     @CShadow
     private HashMap textureMap;
     @CShadow

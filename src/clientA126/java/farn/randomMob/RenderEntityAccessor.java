@@ -2,5 +2,5 @@ package farn.randomMob;
 
 public interface RenderEntityAccessor {
 
-    abstract void FarnloadHttpsTexture(String skin, String og);
+    abstract void calledLoadSkinTexture(String skin, String og);
 }

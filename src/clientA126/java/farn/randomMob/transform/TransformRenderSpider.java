@@ -22,7 +22,7 @@ public class TransformRenderSpider {
             )
     )
     public void useSkinUrl(RenderSpider render, String original) {
-        ((RenderEntityAccessor) render).FarnloadHttpsTexture(spider.skinUrl, original);
+        ((RenderEntityAccessor) render).calledLoadSkinTexture(spider.skinUrl, original);
     }
 
     @CInject(method = "a(Lnet/minecraft/src/EntitySpider;I)Z", target = @CTarget(value="HEAD"))

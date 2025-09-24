@@ -30,12 +30,18 @@ public class RandomMob {
                     id.setBiomeSpawn(getBiomeForEntity(entity));
                 }
                 entity.skinUrl = id.getEntitySkinID() + "_" + id.getBiomeSpawn().toLowerCase();
+                //System.out.println(entity.skinUrl);
             }
         }
     }
 
     //clear cache when changing texturepack
     public static void clearTextureCache() {
+        for(Map.Entry<String, String[]> textureName: textureVariantsCache.entrySet()) {
+            for(String texture: textureName.getValue()) {
+                System.out.println(texture);
+            }
+        }
         propertiesCache.clear();
         textureVariantsCache.clear();
     }
@@ -75,9 +81,7 @@ public class RandomMob {
         String[] variants = textureVariantsCache.computeIfAbsent(baseTexture, RandomMob::getTextureVariants);
         if (variants.length > 1) {
             int idx = entityId % variants.length;
-            if (!variants[idx].equals(variants[0])) {
-                return getTextureNormal(variants[idx]);
-            }
+            return getTextureNormal(variants[idx]);
         }
         return -1;
     }
@@ -105,17 +109,17 @@ public class RandomMob {
         String prefix = texture.substring(0, dot);
         String suffix = texture.substring(dot);
         List<String> list = new ArrayList<>();
-        list.add(texture);
 
         for (int i = 2; i < 1000; i++) {
             String candidate = prefix + i + suffix;
             try (InputStream in = getInputStream(candidate)) {
-                if (in == null) break;
-                list.add(candidate);
+                if (in != null) list.add(candidate);
             } catch (IOException e) {
+                e.printStackTrace();
                 break;
             }
         }
+
         return list.toArray(new String[0]);
     }
 
@@ -156,25 +160,6 @@ public class RandomMob {
         } catch (ClassNotFoundException e) {
             return false;
         }
-    }
-
-
-    public static void setPrivateValue(RenderEngine engine, String fieldName, Object value) {
-        try {
-            setPrivateValue(RenderEngine.class, engine, fieldName, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void setPrivateValue(Class instanceclass, Object instance, String field, Object value) {
-        try {
-            Field e = instanceclass.getDeclaredField(field);
-            e.setAccessible(true);
-            e.set(instance, value);
-        } catch (Exception illegalAccessException6) {
-        }
-
     }
 
     private static Object getPrivateValue(Class instanceclass, Object instance, String field) {

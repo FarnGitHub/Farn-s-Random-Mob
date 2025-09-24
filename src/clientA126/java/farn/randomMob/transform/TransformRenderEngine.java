@@ -36,15 +36,6 @@ public abstract class TransformRenderEngine {
     @CShadow
     private native BufferedImage readTextureImage(InputStream inputStream);
 
-    //hijacked skin download system
-    @CInject(method="getTextureForDownloadableImage", target=@CTarget("HEAD"), cancellable = true)
-    public void getTextureForDownloadableImage(String string, String string2, InjectionCallback callback) {
-        int threaddownloadimagedata = RandomMob.getTextureRandomMob(string, string2);
-        if(threaddownloadimagedata >= 0) {
-            callback.setReturnValue(threaddownloadimagedata);
-        }
-    }
-
     //don't make the game crash when there are no texture + fix compat with other hd texture mod
     @COverride
     public void refreshTextures() {

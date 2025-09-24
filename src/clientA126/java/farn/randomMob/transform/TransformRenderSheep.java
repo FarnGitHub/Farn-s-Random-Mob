@@ -22,7 +22,7 @@ public class TransformRenderSheep {
             )
     )
     public void useSkinUrl(RenderSheep render, String original) {
-        ((RenderEntityAccessor) render).FarnloadHttpsTexture(sheep.skinUrl, original);
+        ((RenderEntityAccessor) render).calledLoadSkinTexture(sheep.skinUrl, original);
     }
 
     @CInject(method = "a(Lnet/minecraft/src/EntitySheep;I)Z", target = @CTarget(value="HEAD"))

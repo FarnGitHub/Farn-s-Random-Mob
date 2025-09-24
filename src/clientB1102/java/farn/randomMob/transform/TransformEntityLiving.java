@@ -18,7 +18,7 @@ public class TransformEntityLiving implements EntitySaveSkinNBT {
     public String biomeRandomMob = "unknown";
 
     //read nbt for skinID and biome that they are currently in
-    @CInject(method = "readEntityFromNBT", target = @CTarget("TAIL"))
+    @CInject(method = "readEntityFromNBT", target = @CTarget("HEAD"))
     public void readNbt(NBTTagCompound nbt, InjectionCallback ci) {
         entitySkinID = nbt.getInteger("randomMobEntityID");
         if(!nbt.hasKey("randomMobEntityID")) {
@@ -31,7 +31,7 @@ public class TransformEntityLiving implements EntitySaveSkinNBT {
     }
 
     //set nbt for skinID and biome that they are currently in
-    @CInject(method = "writeEntityToNBT", target = @CTarget("TAIL"))
+    @CInject(method = "writeEntityToNBT", target = @CTarget("HEAD"))
     public void writeNbt(NBTTagCompound nbt, InjectionCallback ci) {
         nbt.setInteger("randomMobEntityID", this.entitySkinID);
         nbt.setString("randomMobBiome", this.biomeRandomMob);
