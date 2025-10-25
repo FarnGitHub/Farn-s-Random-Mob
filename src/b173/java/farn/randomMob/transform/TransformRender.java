@@ -12,7 +12,7 @@ import net.minecraft.src.*;
 @CTransformer(Render.class)
 public class TransformRender implements RenderEntityAccessor {
 
-    private Render self = (Render) (Object) this;
+    private Render self_render = (Render) (Object) this;
 
     @CShadow
     protected RenderManager renderManager;
@@ -22,7 +22,7 @@ public class TransformRender implements RenderEntityAccessor {
 
     @CInject(method = "loadDownloadableImageTexture", target = @CTarget("HEAD"), cancellable = true)
     public void randommob_redirectLoadImageTexture(String string, String string2, InjectionCallback callback) {
-        if (!(self instanceof RenderPlayer)) {
+        if (!(self_render instanceof RenderPlayer)) {
             int threaddownloadimagedata = RandomMob.getRandomMobTexture(string, string2);
             if (threaddownloadimagedata >= 0) {
                 renderManager.renderEngine.bindTexture(threaddownloadimagedata);

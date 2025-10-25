@@ -3,11 +3,9 @@ package farn.randomMob;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.*;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 
 public class RandomMob {
@@ -19,7 +17,7 @@ public class RandomMob {
     //minecraft instance
     private static Minecraft mc;
 
-    public static boolean registerDefaultHooked = false;
+    private static Class modMenuClass;
 
     //apply skin url for non player entity
     public static void setRandomMobSkinURL(Entity entity) {
@@ -28,10 +26,10 @@ public class RandomMob {
                 entity.skinUrl = entity.entityId + "_" + getBiomeForEntity(entity).toLowerCase();
             } else {
                 EntityRandomMobData id = (EntityRandomMobData) entity;
-                if("unknown".equals(id.randommob_getBiomeSpawn())) {
-                    id.randommob_setBiomeSpawn(getBiomeForEntity(entity));
+                if("unknown".equals(id.randommob_getBiome())) {
+                    id.randommob_setBiome(getBiomeForEntity(entity));
                 }
-                entity.skinUrl = id.randommob_getEntitySkinID() + "_" + id.randommob_getBiomeSpawn().toLowerCase();
+                entity.skinUrl = id.randommob_getID() + "_" + id.randommob_getBiome().toLowerCase();
             }
         }
     }
@@ -151,60 +149,6 @@ public class RandomMob {
         return getMinecraft().renderEngine.getTexture(tex);
     }
 
-    public static boolean classExist(String className) {
-        try {
-            return Class.forName(className) != null;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    public static boolean usingForgeGLSL() {
-        if(RandomMob.classExist("mod_GLSL")) {
-            try {
-                Class shaderToggle = Class.forName("net.mine_diver.glsl.ToggleShaders");
-                String currentShader = (String) getField(shaderToggle, (Object)null, "currentShaders");
-                return !currentShader.equals("default");
-            } catch(Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-
-        }
-        return false;
-    }
-
-    public static void removeGLSLShader() {
-        try {
-            Class shader = Class.forName("net.mine_diver.glsl.Shaders");
-            Method method = shader.getDeclaredMethod("destroy");
-            method.invoke((Object)null);
-            setField(shader, (Object)null, "isInitialized", false);
-            System.out.println("Farn RandomMob Remove Shader");
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void setRenderEngineField(RenderEngine engine, String fieldName, Object value) {
-        try {
-            setField(RenderEngine.class, engine, fieldName, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void setField(Class instanceclass, Object instance, String field, Object value) {
-        try {
-            Field e = instanceclass.getDeclaredField(field);
-            e.setAccessible(true);
-            e.set(instance, value);
-        } catch (Exception illegalAccessException6) {
-        }
-
-    }
-
     private static Object getField(Class instanceclass, Object instance, String field) {
         try {
             Field e = instanceclass.getDeclaredField(field);
@@ -215,41 +159,9 @@ public class RandomMob {
         }
     }
 
-    public static BufferedImage readMCPatcherImage(String value) {
-        try {
-            Class config = Class.forName("com.pclewis.mcpatcher.mod.TextureUtils");
-            Method method = config.getDeclaredMethod("getResourceAsBufferedImage", String.class);
-            return (BufferedImage)method.invoke((Object)null, value);
-        } catch(Exception e) {
-            return null;
-        }
-    }
-
-    public static void setOptifineFont(boolean value) {
-        try {
-            Class config = Class.forName("Config");
-            Method method = config.getDeclaredMethod("setFontRendererUpdated", boolean.class);
-            method.invoke((Object)null, value);
-        } catch(Exception e) {
-        }
-    }
-
-    public static void clearOptifineTextureData(RenderEngine engine) {
-        try {
-            Field privateObjectField = RenderEngine.class.getDeclaredField("textureDataMap");
-            privateObjectField.setAccessible(true);
-            Object privateObjectInstance = privateObjectField.get(engine);
-            Class<?> innerClass = privateObjectInstance.getClass();
-            Method publicVoidMethod = innerClass.getDeclaredMethod("clear");
-            publicVoidMethod.invoke(privateObjectInstance);
-        } catch(Exception e) {
-        }
-    }
     public static String getBiomeForEntity(Entity e) {
         if (e == null || e.worldObj == null) return "unknown";
-        int x = MathHelper.floor_double(e.posX);
-        int z = MathHelper.floor_double(e.posZ);
-        BiomeGenBase biome = e.worldObj.getWorldChunkManager().getBiomeGenAt(x, z);
+        BiomeGenBase biome = e.worldObj.getWorldChunkManager().getBiomeGenAt(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posZ));
         return (biome != null && biome.biomeName != null) ? biome.biomeName : "unknown";
     }
 

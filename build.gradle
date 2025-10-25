@@ -12,6 +12,17 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+sourceSets {
+    a126 {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+    b173 {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://maven.wagyourtail.xyz/releases' }
@@ -33,7 +44,7 @@ repositories {
 unimined {
     useGlobalCache = false
 
-    minecraft {
+    minecraft(sourceSets.b173) {
         version 'b1.7.3'
         side 'client'
 
@@ -68,19 +79,46 @@ unimined {
             }
         }
     }
+
+    minecraft(sourceSets.a126) {
+        version 'a1.2.6'
+        side 'client'
+
+        mappings {
+            retroMCP("a1.2.6")
+
+            stubs(['official', 'retroMCP']) {
+            }
+        }
+
+        jarMod {
+            transforms "${modid}.transform"
+        }
+
+        runs {
+            config('client') {
+                jvmArgs '-Djma.debug=true'
+            }
+        }
+    }
 }
 
 dependencies {
-    jarMod 'risugami:modloader:b1.7.3'
-    jarMod 'modloadermp:modloadermp:b1.7.3:client'
-    jarMod 'net.minecraftforge:forge:b1.7.3-1.0.7:client'
-
-    // Any mods in the jarmods folder are automatically added as dependencies
-    jarMod fileTree(dir: 'jarmods', include: ['*.jar', '*.zip'])
+    b173JarMod 'risugami:modloader:b1.7.3'
+    b173JarMod fileTree(dir: 'jarmods', include: ['*.jar', '*.zip'])
 }
 
-jar {
-    from('LICENSE')
+b173Jar() {
+
+    manifest {
+        attributes(
+            'JarModAgent-Transforms': "${modid}.transform",
+            'JarModAgent-Refmaps': "${modid}-refmap.json"
+        )
+    }
+}
+
+a126Jar() {
 
     manifest {
         attributes(

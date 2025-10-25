@@ -1,6 +1,6 @@
 package farn.randomMob.transform;
 
-import farn.randomMob.EntityRandomMobData;
+import farn.randomMob.EntitySaveSkinNBT;
 import farn.randomMob.RandomMob;
 import net.lenni0451.classtransform.InjectionCallback;
 import net.lenni0451.classtransform.annotations.CTarget;
@@ -10,19 +10,19 @@ import net.minecraft.src.EntityLiving;
 import net.minecraft.src.NBTTagCompound;
 
 @CTransformer(EntityLiving.class)
-public class TransformEntityLiving implements EntityRandomMobData {
+public class TransformEntityLiving implements EntitySaveSkinNBT {
 
     private EntityLiving self = (EntityLiving) (Object) this;
 
-    public int entitySkinID = self.entityId;
+    public int entitySkinID = self.field_620_ab;
     public String biomeRandomMob = "unknown";
 
     //read nbt for skinID and biome that they are currently in
     @CInject(method = "readEntityFromNBT", target = @CTarget("TAIL"))
-    public void randomob_readNbt(NBTTagCompound nbt, InjectionCallback ci) {
+    public void randommob_readNbt(NBTTagCompound nbt, InjectionCallback ci) {
         entitySkinID = nbt.getInteger("randomMobEntityID");
         if(!nbt.hasKey("randomMobEntityID")) {
-            entitySkinID = self.entityId;
+            entitySkinID = self.field_620_ab;
         }
         biomeRandomMob = nbt.getString("randomMobBiome");
         if(!nbt.hasKey("randomMobBiome")) {
@@ -39,19 +39,19 @@ public class TransformEntityLiving implements EntityRandomMobData {
 
     //get skinID
     @Override
-    public int randommob_getEntitySkinID() {
+    public int randommob_getId() {
         return entitySkinID;
     }
 
     //get current biome
     @Override
-    public String randommob_getBiomeSpawn() {
+    public String randommob_getBiome() {
         return biomeRandomMob;
     }
 
     //set current biome
     @Override
-    public void randommob_setBiomeSpawn(String biome) {
+    public void randommob_setBiome(String biome) {
         biomeRandomMob = biome;
     }
 }
