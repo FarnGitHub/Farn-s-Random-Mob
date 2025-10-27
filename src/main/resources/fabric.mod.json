@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"id": "random_mob",
+	"version": "${version}",
+	"name": "Farn's RandomMob",
+	"description": "Allowed for randomize and biome dependent mob texture",
+	"authors": [
+		"farnfarn02"
+	],
+	"contact": {
+		"sources": "https://github.com/FarnGitHub/Farn-s-Random-Mob/"
+	},
+	"license": "CC0-1.0",
+	"icon": "farn/randomMob/icon.png",
+	"environment": "client",
+	"mixins": [
+		"randommob.mixin.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": "1.0.0-beta.7.3"
+	}
+}
