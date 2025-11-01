@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "farn.randomMob.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "WorldMixin",
+    "LivingEntityMixin",
+    "HttpTextureThreadMixin",
+    "EntityRendererMixin",
+    "accessor.EntityRendererAccessor",
+    "SheepRendererMixin",
+    "SpiderRendererMixin",
+    "accessor.MinecraftAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
