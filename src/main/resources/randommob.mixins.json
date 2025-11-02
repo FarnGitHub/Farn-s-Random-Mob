@@ -11,7 +11,9 @@
     "accessor.EntityRendererAccessor",
     "SheepRendererMixin",
     "SpiderRendererMixin",
-    "accessor.MinecraftAccessor"
+    "accessor.MinecraftAccessor",
+    "MixinPackScreen",
+    "MixinScreenBase"
   ],
   "injectors": {
     "defaultRequire": 1

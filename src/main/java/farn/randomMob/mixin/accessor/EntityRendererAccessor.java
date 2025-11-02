@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface EntityRendererAccessor {
 
 	@Invoker("bindDownloadedTexture")
-    boolean randommob_loadHttpsTexture(String skin, String og);
+    boolean bindDownloadableTextures(String skin, String og);
 }

@@ -7,6 +7,4 @@ public interface EntityRandomMobData {
     void randommob_setBiome(String biome);
 
     int randommob_getID();
-
-    boolean randommob_shouldUseDefaultTexture();
 }

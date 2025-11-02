@@ -8,7 +8,6 @@ import net.minecraft.entity.mob.SpiderEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SpiderEntityRenderer.class)
@@ -25,7 +24,7 @@ public class SpiderRendererMixin {
             )
     )
     public void randommob_useSkinUrl(SpiderEntityRenderer render, String s, Operation<Void> original) {
-        ((EntityRendererAccessor) render).randommob_loadHttpsTexture(randommob_spider.skinUrl, s);
+        ((EntityRendererAccessor) render).bindDownloadableTextures(randommob_spider.skinUrl, s);
     }
 
     @Inject(method = "bindTexture(Lnet/minecraft/entity/mob/SpiderEntity;IF)Z", at = @At("HEAD"))

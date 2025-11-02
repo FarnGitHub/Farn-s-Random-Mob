@@ -43,7 +43,6 @@ public class RandomMob {
                 entity.skinUrl = entity.id + "_" + getBiomeForEntity(entity).toLowerCase();
             } else {
                 EntityRandomMobData id = (EntityRandomMobData) entity;
-                if(id.randommob_shouldUseDefaultTexture()) return;
                 if("unknown".equals(id.randommob_getBiome())) {
                     id.randommob_setBiome(getBiomeForEntity(entity));
                 }
@@ -134,7 +133,7 @@ public class RandomMob {
         String prefix = texture.substring(0, dot);
         String suffix = texture.substring(dot);
         List<String> list = new ArrayList<>();
-        //list.add(texture);
+        list.add(texture);
 
         for (int i = 2; i < 1000; i++) {
             String candidate = prefix + i + suffix;
@@ -161,7 +160,7 @@ public class RandomMob {
     }
 
     public static Minecraft getMinecraft() {
-        return MinecraftAccessor.randommob_getMinecraft();
+        return MinecraftAccessor.getInstance();
     }
 
     public static int getTextureId(String tex) {
