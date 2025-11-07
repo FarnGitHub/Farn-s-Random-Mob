@@ -1,6 +1,6 @@
 package farn.randomMob;
 
-import farn.randomMob.mixin.accessor.MinecraftAccessor;
+import farn.randomMob.mixin.MinecraftAccessor;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

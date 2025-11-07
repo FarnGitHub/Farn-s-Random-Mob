@@ -24,7 +24,6 @@ public class LivingEntityMixin implements SinglePlayerSkinData {
     //read nbt for skinID and biome that they are currently in
 	@Inject(method = "readNbt", at = @At("TAIL"))
 	public void readNbt(NbtCompound nbt, CallbackInfo ci) {
-
         if(randommob_self.world.isRemote) return;
 		randommob_id = nbt.getInt("randomMobEntityID");
 		if(!nbt.contains("randomMobEntityID")) {

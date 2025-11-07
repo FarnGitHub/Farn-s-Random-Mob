@@ -1,4 +1,4 @@
-package farn.randomMob.mixin.accessor;
+package farn.randomMob.mixin;
 
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;

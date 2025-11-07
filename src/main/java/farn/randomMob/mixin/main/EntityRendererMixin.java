@@ -17,6 +17,11 @@ public abstract class EntityRendererMixin {
     @Shadow
 	protected EntityRenderDispatcher dispatcher;
 
+    @Shadow
+    protected boolean bindDownloadedTexture(String url, String backup) {
+        throw new AssertionError();
+    }
+
     @WrapMethod(method="bindDownloadedTexture")
     public boolean randommob_redirectLoadImageTexture(String path, String backup, Operation<Boolean> original) {
         if (!(self_render instanceof PlayerEntityRenderer)) {

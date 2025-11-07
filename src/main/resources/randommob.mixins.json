@@ -8,10 +8,9 @@
     "main.LivingEntityMixin",
     "fix.HttpTextureThreadMixin",
     "main.EntityRendererMixin",
-    "accessor.EntityRendererAccessor",
     "render.SheepRendererMixin",
     "render.SpiderRendererMixin",
-    "accessor.MinecraftAccessor",
+    "MinecraftAccessor",
     "fix.MixinTexturePackScreen",
     "fix.MixinScreenBase"
   ],
