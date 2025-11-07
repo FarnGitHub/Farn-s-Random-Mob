@@ -31,7 +31,7 @@ public class LivingEntityMixin implements SinglePlayerSkinData {
 		}
 		randommob_biome = nbt.getString("randomMobBiome");
 		if(!nbt.contains("randomMobBiome")) {
-			randommob_biome = RandomMob.getBiomeForEntity(randommob_self);
+			randommob_biome = RandomMob.getEntityCurrentBiome(randommob_self);
 		}
 	}
 
@@ -44,19 +44,19 @@ public class LivingEntityMixin implements SinglePlayerSkinData {
 
     //get skinID
     @Override
-    public int randommob_getID() {
+    public int randomMob_getID() {
         return randommob_id;
     }
 
     //get current biome
     @Override
-    public String randommob_getBiome() {
+    public String randomMob_getBiome() {
         return randommob_biome;
     }
 
     //set current biome
     @Override
-    public void randommob_setBiome(String biome) {
+    public void randomMob_setBiome(String biome) {
         randommob_biome = biome;
     }
 }

@@ -2,9 +2,9 @@ package farn.randomMob;
 
 public interface SinglePlayerSkinData {
 
-    String randommob_getBiome();
+    String randomMob_getBiome();
 
-    void randommob_setBiome(String biome);
+    void randomMob_setBiome(String biome);
 
-    int randommob_getID();
+    int randomMob_getID();
 }

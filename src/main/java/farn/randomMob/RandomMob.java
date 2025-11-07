@@ -38,19 +38,19 @@ public class RandomMob {
     public static void setRandomMobSkinURL(Entity entity) {
         if (entity.skinUrl == null && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
             if (entity.world.isRemote) {
-                entity.skinUrl = "randommob_" + entity.id + "_" + getBiomeForEntity(entity).toLowerCase();
+                entity.skinUrl = "randommob_" + entity.id + "_" + getEntityCurrentBiome(entity).toLowerCase();
             } else {
                 SinglePlayerSkinData id = (SinglePlayerSkinData) entity;
-                if("unknown".equals(id.randommob_getBiome())) {
-                    id.randommob_setBiome(getBiomeForEntity(entity));
+                if("unknown".equals(id.randomMob_getBiome())) {
+                    id.randomMob_setBiome(getEntityCurrentBiome(entity));
                 }
-                entity.skinUrl = "randommob_" + id.randommob_getID() + "_" + id.randommob_getBiome().toLowerCase();
+                entity.skinUrl = "randommob_" + id.randomMob_getID() + "_" + id.randomMob_getBiome().toLowerCase();
             }
         }
     }
 
     //clear cache when changing texturepack
-    public static void clearRandomMobTextureCache() {
+    public static void clearTextureCache() {
         propertiesCache.clear();
         textureVariantsCache.clear();
     }
@@ -71,7 +71,8 @@ public class RandomMob {
             entityId = Math.abs(skinUrl.hashCode()); // fallback
         }
 
-        Properties props = getPropertiesForTexture(baseTexture);
+        //current format
+        Properties props = getTexturesProperties(baseTexture);
         if (props != null) {
             String key = "biome." + biome.toLowerCase().replace(' ', '_');
 
@@ -91,7 +92,10 @@ public class RandomMob {
                 }
             }
         }
-        String[] variants = textureVariantsCache.computeIfAbsent(baseTexture, RandomMob::getTextureVariants);
+
+
+        //old format
+        String[] variants = textureVariantsCache.computeIfAbsent(baseTexture, RandomMob::getOldFormatVariants);
         if (variants.length > 1) {
             int idx = entityId % variants.length;
             if(hasResource(variants[idx])) {
@@ -101,23 +105,21 @@ public class RandomMob {
         return -1;
     }
 
-    private static Properties getPropertiesForTexture(String texture) {
-        return propertiesCache.computeIfAbsent(texture, RandomMob::loadProperties);
+    private static Properties getTexturesProperties(String texture) {
+        return propertiesCache.computeIfAbsent(texture, baseTexture -> {
+            String path = baseTexture.replace(".png", ".properties");
+            try (InputStream in = getResource(path)) {
+                if (in != null) {
+                    Properties p = new Properties();
+                    p.load(in);
+                    return p;
+                }
+            } catch (IOException ignored) {}
+            return null;
+        });
     }
 
-    private static Properties loadProperties(String baseTexture) {
-        String path = baseTexture.replace(".png", ".properties");
-        try (InputStream in = getResource(path)) {
-            if (in != null) {
-                Properties p = new Properties();
-                p.load(in);
-                return p;
-            }
-        } catch (IOException ignored) {}
-        return null;
-    }
-
-    private static String[] getTextureVariants(String texture) {
+    private static String[] getOldFormatVariants(String texture) {
         int dot = texture.lastIndexOf('.');
         if (dot < 0) return new String[]{texture};
 
@@ -158,7 +160,7 @@ public class RandomMob {
         return getMinecraft().textureManager.getTextureId(tex);
     }
 
-    public static String getBiomeForEntity(Entity e) {
+    public static String getEntityCurrentBiome(Entity e) {
         if (e == null || e.world == null) return "unknown";
         Biome biome = e.world.method_1781().getBiome(MathHelper.floor(e.x), MathHelper.floor(e.z));
         return (biome != null && biome.name != null) ? biome.name : "unknown";
@@ -166,8 +168,8 @@ public class RandomMob {
 
     @SuppressWarnings("unused")
     @EventListener
-    public void clearTextureCache(TexturePackLoadedEvent.After after) {
-        RandomMob.clearRandomMobTextureCache();
+    public void clearTextureCacheStapi(TexturePackLoadedEvent.After after) {
+        clearTextureCache();
     }
 
 }

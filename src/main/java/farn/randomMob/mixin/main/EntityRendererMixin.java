@@ -12,8 +12,6 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin {
 
-    private EntityRenderer self_render = (EntityRenderer) (Object) this;
-
     @Shadow
 	protected EntityRenderDispatcher dispatcher;
 
@@ -24,7 +22,7 @@ public abstract class EntityRendererMixin {
 
     @WrapMethod(method="bindDownloadedTexture")
     public boolean randommob_redirectLoadImageTexture(String path, String backup, Operation<Boolean> original) {
-        if (!(self_render instanceof PlayerEntityRenderer)) {
+        if (!((EntityRenderer) (Object) this instanceof PlayerEntityRenderer)) {
             int threaddownloadimagedata = RandomMob.getRandomMobTexture(path, backup);
             if (threaddownloadimagedata >= 0) {
                 dispatcher.textureManager.bindTexture(threaddownloadimagedata);
