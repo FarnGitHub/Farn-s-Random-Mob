@@ -1,4 +1,4 @@
-package farn.randomMob.mixin;
+package farn.randomMob.mixin.fix;
 
 import net.minecraft.client.gui.screen.pack.PackScreen;
 import org.spongepowered.asm.mixin.Mixin;

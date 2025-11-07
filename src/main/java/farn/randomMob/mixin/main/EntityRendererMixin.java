@@ -1,4 +1,4 @@
-package farn.randomMob.mixin;
+package farn.randomMob.mixin.main;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

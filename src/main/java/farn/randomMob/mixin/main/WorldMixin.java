@@ -1,4 +1,4 @@
-package farn.randomMob.mixin;
+package farn.randomMob.mixin.main;
 
 import farn.randomMob.RandomMob;
 import net.minecraft.entity.Entity;

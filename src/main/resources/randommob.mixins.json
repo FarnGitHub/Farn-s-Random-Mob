@@ -4,16 +4,16 @@
   "package": "farn.randomMob.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "WorldMixin",
-    "LivingEntityMixin",
-    "HttpTextureThreadMixin",
-    "EntityRendererMixin",
+    "main.WorldMixin",
+    "main.LivingEntityMixin",
+    "fix.HttpTextureThreadMixin",
+    "main.EntityRendererMixin",
     "accessor.EntityRendererAccessor",
-    "SheepRendererMixin",
-    "SpiderRendererMixin",
+    "render.SheepRendererMixin",
+    "render.SpiderRendererMixin",
     "accessor.MinecraftAccessor",
-    "MixinTexturePackScreen",
-    "MixinScreenBase"
+    "fix.MixinTexturePackScreen",
+    "fix.MixinScreenBase"
   ],
   "injectors": {
     "defaultRequire": 1

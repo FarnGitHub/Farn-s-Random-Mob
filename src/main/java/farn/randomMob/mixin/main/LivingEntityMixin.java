@@ -1,11 +1,9 @@
-package farn.randomMob.mixin;
+package farn.randomMob.mixin.main;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import farn.randomMob.EntityRandomMobData;
+import farn.randomMob.SinglePlayerSkinData;
 import farn.randomMob.RandomMob;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin implements EntityRandomMobData {
+public class LivingEntityMixin implements SinglePlayerSkinData {
 
     private LivingEntity randommob_self = (LivingEntity) (Object) this;
 

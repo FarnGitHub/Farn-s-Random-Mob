@@ -1,6 +1,6 @@
 package farn.randomMob;
 
-public interface EntityRandomMobData {
+public interface SinglePlayerSkinData {
 
     String randommob_getBiome();
 

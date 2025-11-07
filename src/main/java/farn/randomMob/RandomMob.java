@@ -40,7 +40,7 @@ public class RandomMob {
             if (entity.world.isRemote) {
                 entity.skinUrl = "randommob_" + entity.id + "_" + getBiomeForEntity(entity).toLowerCase();
             } else {
-                EntityRandomMobData id = (EntityRandomMobData) entity;
+                SinglePlayerSkinData id = (SinglePlayerSkinData) entity;
                 if("unknown".equals(id.randommob_getBiome())) {
                     id.randommob_setBiome(getBiomeForEntity(entity));
                 }
