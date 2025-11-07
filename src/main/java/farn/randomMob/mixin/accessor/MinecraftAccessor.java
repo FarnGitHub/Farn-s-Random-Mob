@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface MinecraftAccessor {
 
 	@Accessor("INSTANCE")
-	public static Minecraft getInstance() {
+	static Minecraft getInstance() {
 		throw new AssertionError();
 	}
 }

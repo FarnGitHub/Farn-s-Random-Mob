@@ -3,7 +3,6 @@ package farn.randomMob;
 import farn.randomMob.mixin.accessor.MinecraftAccessor;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resource.pack.TexturePack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,9 +21,11 @@ import org.apache.logging.log4j.Logger;
 
 public class RandomMob {
 
+    @SuppressWarnings("unused")
     @Entrypoint.Namespace
     public static Namespace NAMESPACE;
 
+    @SuppressWarnings("unused")
     @Entrypoint.Logger
     public static Logger LOGGER = Null.get();
 
@@ -33,42 +34,32 @@ public class RandomMob {
     //old texture variant list
     private static final Map<String, String[]> textureVariantsCache = new HashMap<>();
 
-    private static TexturePack currentTexturepack;
-
     //apply skin url for non player entity
     public static void setRandomMobSkinURL(Entity entity) {
         if (entity.skinUrl == null && entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
             if (entity.world.isRemote) {
-                if(entity.world.random.nextBoolean()) return;
-                entity.skinUrl = entity.id + "_" + getBiomeForEntity(entity).toLowerCase();
+                entity.skinUrl = "randommob_" + entity.id + "_" + getBiomeForEntity(entity).toLowerCase();
             } else {
                 EntityRandomMobData id = (EntityRandomMobData) entity;
                 if("unknown".equals(id.randommob_getBiome())) {
                     id.randommob_setBiome(getBiomeForEntity(entity));
                 }
-                entity.skinUrl = id.randommob_getID() + "_" + id.randommob_getBiome().toLowerCase();
+                entity.skinUrl = "randommob_" + id.randommob_getID() + "_" + id.randommob_getBiome().toLowerCase();
             }
         }
     }
 
     //clear cache when changing texturepack
     public static void clearRandomMobTextureCache() {
-        List<String> subTextures = new ArrayList<>();
-        for(String[] theString : textureVariantsCache.values()) {
-            for(String theSubTexture : theString) {
-                subTextures.add(theSubTexture);
-            }
-        }
         propertiesCache.clear();
         textureVariantsCache.clear();
-        for(String hasSubTex: subTextures) {
-            LOGGER.info(hasSubTex + " has resource: " +hasResource(hasSubTex));
-        }
     }
 
     //get custom variant texture by using properties file for the baseTexture or using the old way of getting texture
     public static int getRandomMobTexture(String skinUrl, String baseTexture) {
-        if (skinUrl == null || baseTexture == null) return -1;
+        if (!skinUrl.startsWith("randommob_") || baseTexture == null) return -1;
+        skinUrl = skinUrl.substring("randommob_".length());
+
         String[] parts = skinUrl.split("_", 2);
         String idPart = parts[0];
         String biome = parts.length > 1 ? parts[1] : "unknown";
@@ -148,15 +139,15 @@ public class RandomMob {
     }
 
     public static InputStream getResource(String resource) {
-        return getMinecraft().texturePacks.selected.getResource(resource);
+        try {
+            return getMinecraft().texturePacks.selected.getResource(resource);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static boolean hasResource(String resource) {
-        try {
-            return RandomMob.getResource(resource) != null;
-        } catch (Exception e) {
-            return false;
-        }
+         return RandomMob.getResource(resource) != null;
     }
 
     public static Minecraft getMinecraft() {
@@ -173,8 +164,9 @@ public class RandomMob {
         return (biome != null && biome.name != null) ? biome.name : "unknown";
     }
 
+    @SuppressWarnings("unused")
     @EventListener
-    public void doDoubleReload(TexturePackLoadedEvent.After after) {
+    public void clearTextureCache(TexturePackLoadedEvent.After after) {
         RandomMob.clearRandomMobTextureCache();
     }
 

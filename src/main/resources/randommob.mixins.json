@@ -12,7 +12,7 @@
     "SheepRendererMixin",
     "SpiderRendererMixin",
     "accessor.MinecraftAccessor",
-    "MixinPackScreen",
+    "MixinTexturePackScreen",
     "MixinScreenBase"
   ],
   "injectors": {
