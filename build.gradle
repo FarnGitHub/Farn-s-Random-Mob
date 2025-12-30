@@ -1,0 +1,122 @@
+plugins {
+    id 'java'
+    id 'xyz.wagyourtail.unimined' version '1.4.2-SNAPSHOT'
+}
+
+group = project.property('group')
+version = project.property('version')
+base.archivesName = project.property('modname')
+
+java {
+    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 8
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+unimined {
+    useGlobalCache = true
+
+    minecraft {
+        version 'a1.2.6'
+        side "client"
+
+        mappings {
+            retroMCP("a1.2.6")
+            devNamespace("retroMCP")
+            stubs(['official', 'retroMCP']) {
+                def base = 'net/minecraft/src'
+                def mapClass = { name ->
+                    def path = "$base/$name"
+                    c(name, path, path)
+                }
+                ['ChatAllowedCharacters',
+                 'ChatClickData',
+                 'Container',
+                 'ContainerChest',
+                 'ContainerFurnace',
+                 'ContainerPlayer',
+                 'ContainerWorkbench',
+                 'DataWatcher',
+                 'Empty1',
+                 'GuiChatConfirmLink',
+                 'GuiNewChat',
+                 'GuiSlot',
+                 'GuiTextField',
+                 'GuiTexturePackSlot',
+                 "GuiConfirmOpenLink",
+                 'ICrafting',
+                 'IInvBasic',
+                 'InventoryBasic',
+                 "IRecipe",
+                 "MouseFilter",
+                 "Packet17Sleep",
+                 "Packet19EntityAction",
+                 "Packet25EntityPainting",
+                 "Packet27Position",
+                 "Packet40EntityMetadata",
+                 "Packet54PlayNoteBlock",
+                 "Packet40EntityMetadata",
+                 "Packet61DoorChange",
+                 "Packet62Sound",
+                 "Packet63Digging",
+                 "Packet70Bed",
+                 "Packet71Weather",
+                 "Packet100OpenWindow",
+                 "Packet101CloseWindow",
+                 "Packet102WindowClick",
+                 "Packet103SetSlot",
+                 "Packet104WindowItems",
+                 "Packet105UpdateProgressbar",
+                 "Packet106Transaction",
+                 "Packet130UpdateSign",
+                 "Packet131MapData",
+                 "Packet200Statistic",
+                 "PacketCounter",
+                 "ShapedRecipes",
+                 "SlotFurnace",
+                 "StringUtils",
+                 "ThreadCloseConnection",
+                 "WatchableObject"].each(mapClass)
+            }
+        }
+
+        merged {
+            fabric {
+                customIntermediaries = true
+                prodNamespace("official")
+                loader '0.18.3'
+            }
+            jarMod {
+            }
+        }
+    }
+}
+
+import xyz.wagyourtail.unimined.api.minecraft.task.RemapJarTask
+
+tasks.withType(RemapJarTask).configureEach {
+    mixinRemap {
+        enableBaseMixin()
+        enableMixinExtra()
+    }
+}
+
+dependencies {
+    jarMod(files("custom_jar/APClientV202.jar"))
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
