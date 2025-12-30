@@ -15,7 +15,7 @@
   "license": "CC0-1.0",
   "environment": "client",
   "mixins": [
-    "modid.mixins.json"
+    "randommob.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.19",
