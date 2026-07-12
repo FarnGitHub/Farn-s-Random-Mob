@@ -1,4 +1,4 @@
-package farn.randomMob.mixin.main;
+package farn.randomMob.mixin;
 
 import farn.randomMob.SinglePlayerSkinData;
 import farn.randomMob.RandomMob;
@@ -19,24 +19,23 @@ public class LivingEntityMixin implements SinglePlayerSkinData {
     public int randommob_id = randommob_self.id;
 
     @Unique
-    public String randommob_biome = "unknown";
+    public String randommob_biome = "default";
+
+    @Inject(method="<init>", at = @At("TAIL"))
+    public void randommob_init(CallbackInfo ci) {
+        randommob_biome = RandomMob.getEntityCurrentBiome(randommob_self);
+    }
 
     //read nbt for skinID and biome that they are currently in
 	@Inject(method = "readNbt", at = @At("TAIL"))
-	public void readNbt(NbtCompound nbt, CallbackInfo ci) {
+	public void randommob_readNbt(NbtCompound nbt, CallbackInfo ci) {
         if(randommob_self.world.isRemote) return;
 		randommob_id = nbt.getInt("randomMobEntityID");
-		if(!nbt.contains("randomMobEntityID")) {
-			randommob_id = randommob_self.id;
-		}
-		randommob_biome = nbt.getString("randomMobBiome");
-		if(!nbt.contains("randomMobBiome")) {
-			randommob_biome = RandomMob.getEntityCurrentBiome(randommob_self);
-		}
+        randomMob_setBiome(nbt.getString("randomMobBiome"));
 	}
 
 	@Inject(method = "writeNbt", at = @At("TAIL"))
-	public void writeNbt(NbtCompound nbt, CallbackInfo ci) {
+	public void randommob_writeNbt(NbtCompound nbt, CallbackInfo ci) {
         if(randommob_self.world.isRemote) return;
 		nbt.putInt("randomMobEntityID", this.randommob_id);
 		nbt.putString("randomMobBiome", this.randommob_biome);
@@ -57,6 +56,8 @@ public class LivingEntityMixin implements SinglePlayerSkinData {
     //set current biome
     @Override
     public void randomMob_setBiome(String biome) {
+        if(randommob_biome == null || randommob_biome.isEmpty())
+            biome = "default";
         randommob_biome = biome;
     }
 }
