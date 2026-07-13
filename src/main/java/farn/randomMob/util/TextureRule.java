@@ -27,7 +27,7 @@ public class TextureRule {
             defVariants = Util.getOldFormatVariants(defTexture);
     }
 
-    private void loadProp(InputStream stream) {
+    public void loadProp(InputStream stream) {
         try {
             Properties props = new Properties();
             props.load(stream);
