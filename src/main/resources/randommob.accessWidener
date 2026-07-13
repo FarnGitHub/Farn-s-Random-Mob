@@ -1,4 +1,4 @@
 classTweaker v1 named
 
 accessible field net/minecraft/client/Minecraft INSTANCE Lnet/minecraft/client/Minecraft;
-transitive-inject-interface net/minecraft/entity/LivingEntity farn/randomMob/SinglePlayerSkinData
+transitive-inject-interface net/minecraft/entity/LivingEntity farn/randomMob/impl/RandomMobImpl

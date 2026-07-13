@@ -1,7 +1,5 @@
 package farn.randomMob.mixin.render;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import farn.randomMob.RandomMob;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
