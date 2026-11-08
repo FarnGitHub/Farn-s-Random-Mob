@@ -39,12 +39,18 @@ repositories {
             artifact()
         }
     }
+    maven { url 'https://jitpack.io' }
 }
 
 unimined {
-    useGlobalCache = false
+
+    dependencies {
+        implementation "com.github.FarnGitHub:JarModAgent:1.3-modified"
+        implementation "net.lenni0451.classtransform:core:1.15.1"
+    }
 
     minecraft(sourceSets.b173) {
+        combineWith(sourceSets.main)
         version 'b1.7.3'
         side 'client'
 
@@ -70,6 +76,7 @@ unimined {
         }
 
         jarMod {
+            enableJarModAgent = false
             transforms "${modid}.transform"
         }
 
@@ -81,6 +88,7 @@ unimined {
     }
 
     minecraft(sourceSets.a126) {
+        combineWith(sourceSets.main)
         version 'a1.2.6'
         side 'client'
 
@@ -92,6 +100,7 @@ unimined {
         }
 
         jarMod {
+            enableJarModAgent = false
             transforms "${modid}.transform"
         }
 
@@ -106,6 +115,10 @@ unimined {
 dependencies {
     b173JarMod 'risugami:modloader:b1.7.3'
     b173JarMod fileTree(dir: 'jarmods', include: ['*.jar', '*.zip'])
+    b173Implementation "com.github.FarnGitHub:JarModAgent:1.3-modified"
+    b173Implementation "net.lenni0451.classtransform:core:1.15.1"
+    a126Implementation "com.github.FarnGitHub:JarModAgent:1.3-modified"
+    a126Implementation "net.lenni0451.classtransform:core:1.15.1"
 }
 
 b173Jar() {

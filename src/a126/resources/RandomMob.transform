@@ -1,7 +1,5 @@
-farn.randomMob.transform.TransformRenderEngine
-farn.randomMob.transform.TransformWorld
-farn.randomMob.transform.TransformEntityLiving
-farn.randomMob.transform.TransformRenderSheep
-farn.randomMob.transform.TransformRender
-farn.randomMob.transform.TransformRenderSpider
-farn.randomMob.transform.TransformDownloadImageThread
+farn.randomMob.transform.entity.EntityLivingTranformer
+farn.randomMob.transform.render.RenderLivingTransformer
+farn.randomMob.transform.render.RenderSheepTransformer
+farn.randomMob.transform.render.RenderSpiderTransformer
+farn.randomMob.transform.RenderEngineTransformer

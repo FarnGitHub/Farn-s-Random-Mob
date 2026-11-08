@@ -1,104 +1,38 @@
 package farn.randomMob;
 
+import farn.randomMob.impl.EntityImpl;
+import farn.randomMob.impl.RenderEngineImpl;
+import farn.randomMob.util.Util;
+import farn.randomMob.util.TextureRule;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.*;
+import net.minecraft.src.EntityLiving;
+import net.minecraft.src.RenderEngine;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class RandomMob {
+public final class RandomMob {
 
-    //properties list
-    private static final Map<String, Properties> propertiesCache = new HashMap<>();
-    //old texture variant list
-    private static final Map<String, String[]> textureVariantsCache = new HashMap<>();
-    //minecraft instance
+    private static final Map<String, TextureRule> textureRule = new HashMap<>();
+    public static final List<String> cachedTextures = new ArrayList<>();
     private static Minecraft mc;
 
-    private static Class modMenuClass;
-
-    //apply skin url for non player entity
-    public static void setRandomMobSkinURL(Entity entity) {
-        if (entity.skinUrl == null && entity instanceof EntityLiving && !(entity instanceof EntityPlayer)) {
-            if (entity.worldObj.multiplayerWorld) {
-                entity.skinUrl = entity.entityId + "_" + getBiomeForEntity(entity).toLowerCase();
-            } else {
-                EntityRandomMobData id = (EntityRandomMobData) entity;
-                if("unknown".equals(id.randommob_getBiome())) {
-                    id.randommob_setBiome(getBiomeForEntity(entity));
-                }
-                entity.skinUrl = id.randommob_getID() + "_" + id.randommob_getBiome().toLowerCase();
-            }
-        }
+    private RandomMob() {
     }
 
-    //clear cache when changing texturepack
-    public static void clearRandomMobTextureCache() {
-        propertiesCache.clear();
-        textureVariantsCache.clear();
+    public static void clearTextures() {
+        textureRule.clear();
+        cachedTextures.forEach(RandomMob::delete);
+        cachedTextures.clear();
     }
 
-    //get custom variant texture by using properties file for the baseTexture or using the old way of getting texture
-    public static int getRandomMobTexture(String skinUrl, String baseTexture) {
-        if (skinUrl == null || baseTexture == null) return -1;
-        String[] parts = skinUrl.split("_", 2);
-        String idPart = parts[0];
-        String biome = parts.length > 1 ? parts[1] : "unknown";
-
-        int entityId;
-        try {
-            entityId = Math.abs(Integer.parseInt(idPart));
-        } catch (NumberFormatException e) {
-            entityId = Math.abs(skinUrl.hashCode()); // fallback
-        }
-
-        Properties props = getPropertiesForTexture(baseTexture);
-        if (props != null) {
-            String key = "biome." + biome.toLowerCase().replace(' ', '_');
-
-            String rule = props.getProperty(key);
-            if (rule == null) rule = props.getProperty("biome.default");
-
-            if (rule != null) {
-                String[] variants = Arrays.stream(rule.split(","))
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
-                        .toArray(String[]::new);
-                if (variants.length > 0) {
-                    String chosen = variants[entityId % variants.length];
-                    return getTextureId(chosen);
-                }
-            }
-        }
-        String[] variants = textureVariantsCache.computeIfAbsent(baseTexture, RandomMob::getTextureVariants);
-        if (variants.length > 1) {
-            int idx = entityId % variants.length;
-            if (!variants[idx].equals(variants[0])) {
-                return getTextureId(variants[idx]);
-            }
-        }
-        return -1;
+    public static String getTexture(EntityLiving entLiving, String backup) {
+        EntityImpl ent = (EntityImpl) entLiving;
+        return textureRule.computeIfAbsent(backup, TextureRule::new)
+                .getTexture(ent.randomMob_getBiome(), ent.randomMob_getID());
     }
 
-    private static Properties getPropertiesForTexture(String texture) {
-        return propertiesCache.computeIfAbsent(texture, RandomMob::loadProperties);
-    }
-
-    private static Properties loadProperties(String baseTexture) {
-        String path = baseTexture.replace(".png", ".properties");
-        try (InputStream in = getResource(path)) {
-            if (in != null) {
-                Properties p = new Properties();
-                p.load(in);
-                return p;
-            }
-        } catch (IOException ignored) {}
-        return null;
-    }
-
-    private static String[] getTextureVariants(String texture) {
+    public static String[] getOldFormatVariants(String texture) {
         int dot = texture.lastIndexOf('.');
         if (dot < 0) return new String[]{texture};
 
@@ -107,20 +41,28 @@ public class RandomMob {
         List<String> list = new ArrayList<>();
         list.add(texture);
 
-        for (int i = 2; i < 1000; i++) {
+        for (int i = 2; i < 100; i++) {
             String candidate = prefix + i + suffix;
-            try (InputStream in = getResource(candidate)) {
-                if (in == null) break;
+            if(Util.hasResource(candidate))  {
                 list.add(candidate);
-            } catch (IOException e) {
-                break;
-            }
+                addToCache(candidate);
+            } else break;
         }
         return list.toArray(new String[0]);
     }
 
-    public static InputStream getResource(String resource) {
-        return getMinecraft().texturePackList.selectedTexturePack.getResourceAsStream(resource);
+    public static void addToCache(Collection<String> texture) {
+        cachedTextures.addAll(texture);
+    }
+
+    public static void addToCache(String texture) {
+        cachedTextures.add(texture);
+    }
+
+    public static void delete(String texture) {
+        RenderEngine manager = mc.renderEngine;
+        manager.deleteTexture(manager.getTexture(texture));
+        ((RenderEngineImpl)manager).randomMob_deleteTexture(texture);
     }
 
     public static Minecraft getMinecraft() {
@@ -131,38 +73,19 @@ public class RandomMob {
                 Thread[] threads = new Thread[count];
                 e.enumerate(threads);
 
-                for(int i = 0; i < threads.length; ++i) {
-                    if(threads[i].getName().equals("Minecraft main thread")) {
-                        mc = (Minecraft) getField(Thread.class, threads[i], "target");
+                for (Thread thread : threads) {
+                    if (thread.getName().equals("Minecraft main thread")) {
+                        Field threadField = Thread.class.getDeclaredField("target");
+                        threadField.setAccessible(true);
+                        mc = (Minecraft) threadField.get(thread);
                         break;
                     }
                 }
-            } catch (SecurityException securityException4) {
+            } catch (Exception securityException4) {
                 throw new RuntimeException(securityException4);
             }
         }
-
         return mc;
-    }
-
-    public static int getTextureId(String tex) {
-        return getMinecraft().renderEngine.getTexture(tex);
-    }
-
-    private static Object getField(Class instanceclass, Object instance, String field) {
-        try {
-            Field e = instanceclass.getDeclaredField(field);
-            e.setAccessible(true);
-            return e.get(instance);
-        } catch (Exception illegalAccessException4) {
-            return null;
-        }
-    }
-
-    public static String getBiomeForEntity(Entity e) {
-        if (e == null || e.worldObj == null) return "unknown";
-        BiomeGenBase biome = e.worldObj.getWorldChunkManager().getBiomeGenAt(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posZ));
-        return (biome != null && biome.biomeName != null) ? biome.biomeName : "unknown";
     }
 
 }
