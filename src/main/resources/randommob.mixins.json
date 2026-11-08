@@ -6,7 +6,6 @@
   "client": [
     "TextureManagerMixin",
     "entity.LivingEntityMixin",
-    "entity.PlayerEntityMixin",
     "render.LivingRendererMixin",
     "render.SheepRendererMixin",
     "render.SpiderRendererMixin"

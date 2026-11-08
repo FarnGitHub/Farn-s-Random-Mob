@@ -1,5 +1,7 @@
 package farn.randomMob.util;
 
+import farn.randomMob.RandomMob;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -19,7 +21,7 @@ public class TextureRule {
         if(stream != null) loadProp(stream);
 
         if(this.defVariants == null)
-            this.defVariants = Util.getOldFormatVariants(backup);
+            this.defVariants = RandomMob.getOldFormatVariants(backup);
     }
 
     public TextureRule(String texture) {
@@ -37,9 +39,11 @@ public class TextureRule {
                 if(!key.startsWith("biome.")) continue;
 
                 String[] variants = Util.splitAndTrim((String)entry.getValue());
-                if(key.equals("biome.default")) defVariants = variants;
+                if(key.equals("biome.default"))
+                    defVariants = variants;
 
                 this.variants.put(key, variants);
+                RandomMob.addToCache(Arrays.asList(variants));
             }
         } catch (IOException e) {
             System.err.println("[RandomMob] Failed to load texture properties");
