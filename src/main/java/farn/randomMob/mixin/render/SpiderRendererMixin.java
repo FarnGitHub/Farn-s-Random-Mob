@@ -1,7 +1,7 @@
 package farn.randomMob.mixin.render;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import farn.randomMob.RandomMob;
+import farn.randomMob.util.Util;
 import net.minecraft.client.render.entity.SpiderEntityRenderer;
 import net.minecraft.entity.mob.SpiderEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,9 +18,7 @@ public class SpiderRendererMixin{
                     target = "Lnet/minecraft/client/render/entity/SpiderEntityRenderer;bindTexture(Ljava/lang/String;)V"
             )
     )
-    public String randomMob_useRandomTexture(String backup, @Local(argsOnly = true) SpiderEntity sheep) {
-        String randomTex = RandomMob.getRandomMobTexture(sheep, backup);
-        if (randomTex != null && !randomTex.isEmpty()) backup = randomTex;
-        return backup;
+    public String randomMob_useRandomTexture(String backup, @Local(argsOnly = true) SpiderEntity spider) {
+        return Util.getRandomTexture(spider, backup);
     }
 }

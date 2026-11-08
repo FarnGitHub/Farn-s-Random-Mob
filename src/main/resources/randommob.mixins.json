@@ -4,7 +4,9 @@
   "package": "farn.randomMob.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "LivingEntityMixin",
+    "TextureManagerMixin",
+    "entity.LivingEntityMixin",
+    "entity.PlayerEntityMixin",
     "render.LivingRendererMixin",
     "render.SheepRendererMixin",
     "render.SpiderRendererMixin"

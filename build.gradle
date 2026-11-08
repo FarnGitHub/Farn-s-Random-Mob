@@ -1,7 +1,7 @@
 plugins {
     id 'maven-publish'
-    id 'fabric-loom' version '1.16.2'
-    id 'babric-loom-extension' version '1.16.1'
+    id 'fabric-loom' version '1.17.20'
+    id 'babric-loom-extension' version '1.17.2'
 }
 
 version = property("mod_version")
@@ -171,10 +171,6 @@ dependencies {
         modRuntimeOnly("maven.modrinth:unitweaks:${project.unitweaks_version}-b1.7.3") {
             transitive = false
         }
-    }
-
-    modImplementation("maven.modrinth:farnutil:3.6.9-babric-b1.7.3") {
-        transitive = true
     }
 
     modRuntimeOnly("maven.modrinth:fast-stapi-intro:2.0.0-b1.7.3") {

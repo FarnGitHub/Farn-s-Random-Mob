@@ -13,6 +13,6 @@ public interface RandomMobImpl {
         return 0;
     }
 
-    default void randomMob_setId(int id){
+    default void randomMob_setID(int id){
     }
 }

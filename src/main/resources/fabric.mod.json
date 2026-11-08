@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "random_mob",
   "version": "${version}",
-
   "name": "Farn's RandomMob",
   "description": "Allowed for randomize and biome dependent mob texture",
   "authors": [
@@ -11,18 +10,12 @@
   "license": "MIT",
   "icon": "assets/randommob/icon.png",
   "environment": "client",
-  "entrypoints": {
-    "stationapi:event_bus_client": [
-      "farn.randomMob.RandomMob"
-    ]
-  },
   "mixins": [
     "randommob.mixins.json"
   ],
   "accessWidener": "randommob.accessWidener",
   "depends": {
-    "minecraft": "1.0.0-beta.7.3",
-    "stationapi": "*"
+    "minecraft": "1.0.0-beta.7.3"
   },
   "custom": {
     "stationapi:verify_client": false

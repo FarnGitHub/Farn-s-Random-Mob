@@ -1,7 +1,7 @@
 package farn.randomMob.mixin.render;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import farn.randomMob.RandomMob;
+import farn.randomMob.util.Util;
 import net.minecraft.client.render.entity.SheepEntityRenderer;
 import net.minecraft.entity.passive.SheepEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,9 +19,7 @@ public class SheepRendererMixin {
             )
     )
     public String randomMob_useRandomTexture(String backup, @Local(argsOnly = true) SheepEntity sheep) {
-        String randomTex = RandomMob.getRandomMobTexture(sheep, backup);
-        if (randomTex != null && !randomTex.isEmpty()) backup = randomTex;
-        return backup;
+        return Util.getRandomTexture(sheep, backup);
     }
 
 }
