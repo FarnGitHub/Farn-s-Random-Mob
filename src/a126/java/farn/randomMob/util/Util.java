@@ -4,10 +4,14 @@ import farn.randomMob.RandomMob;
 import net.minecraft.src.Entity;
 import net.minecraft.src.MobSpawnerBase;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.*;
 
 public final class Util {
+
+    public static final BufferedImage missingTexture = new BufferedImage(64, 64, 2);
 
     private Util() {
     }
@@ -46,5 +50,14 @@ public final class Util {
         biome = biome.replace(" ", "_");
 
         return biome;
+    }
+
+    static {
+        Graphics graphic = missingTexture.getGraphics();
+        graphic.setColor(Color.WHITE);
+        graphic.fillRect(0, 0, 64, 64);
+        graphic.setColor(Color.BLACK);
+        graphic.drawString("missingtex", 1, 10);
+        graphic.dispose();
     }
 }

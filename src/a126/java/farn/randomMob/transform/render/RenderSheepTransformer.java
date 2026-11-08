@@ -10,7 +10,7 @@ import net.minecraft.src.RenderSheep;
 @CTransformer(value = RenderSheep.class)
 public class RenderSheepTransformer {
 
-    @CModifyConstant(method="a(Lnet/minecraft/src/EntitySheep;IF)Z", stringValue = "/mob/sheep_fur.png", optional = true)
+    @CModifyConstant(method="a(Lnet/minecraft/src/EntitySheep;I)Z", stringValue = "/mob/sheep_fur.png", optional = true)
     public String randomMob_useRandomTextureSheep(String backup, @CLocalVariable(index = 1) EntitySheep living) {
         return RandomMob.getTexture(living, backup);
     }
